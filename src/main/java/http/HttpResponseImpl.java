@@ -16,7 +16,7 @@ public class HttpResponseImpl implements HttpResponse{
 
     public String message() {
         StringBuilder message = new StringBuilder();
-        message.append("HTTP/1.1")
+        message.append("HTTP/1.0")
                 .append(" ")
                 .append(statusCode)
                 .append(" ")
@@ -28,7 +28,7 @@ public class HttpResponseImpl implements HttpResponse{
                     .append(header.getValue())
                     .append("\n");
         }
-        message.append("\n\n");
+        message.append("\n");
         message.append(body);
         return message.toString();
     }

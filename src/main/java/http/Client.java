@@ -1,27 +1,32 @@
 package http;
 
+import exceptions.MethodNotFoundException;
+import exceptions.ServletNotFoundException;
+import http.config.Configuration;
+import http.entity.Role;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
+import java.util.Set;
 
 public class Client implements Runnable{
 
     private final Socket socket;
     private final InputStream is;
     private final OutputStream os;
-
+    private final Configuration configuration;
     private final Router router;
-
     private boolean connected;
-
     private final byte[] BUFFER = new byte[1024];
 
-    public Client(Socket socket, Router router) throws IOException {
+    public Client(Socket socket, Configuration configuration) throws IOException {
         this.socket = socket;
         this.is = socket.getInputStream();
         this.os = socket.getOutputStream();
-        this.router = router;
+        this.configuration = configuration;
+        this.router = configuration.routerConfig();
         this.connected = true;
     }
 
@@ -39,13 +44,21 @@ public class Client implements Runnable{
                     sb.append(new String(BUFFER, 0, read));
                     available -= read;
                 }
+                //System.out.println(sb);
                 HttpRequest request = new HttpRequestImpl(sb.toString());
                 HttpResponse response = new HttpResponseImpl();
-
-                String url = request.getUrl();
-                handle(request, response);
-                os.write(response.message().getBytes());
-                connected = false;
+                try{
+                    handle(request, response);
+                } catch (MethodNotFoundException | ServletNotFoundException e) {
+                    response.setCode("Not Found");
+                    response.setStatusCode(404);
+                    response.addHeader("server", "denis");
+                    response.addHeader("Content-Type", "text/html; charset=utf-8");
+                    response.setBody("<html><body><h2>404 Page not found</h2></body></html>");
+                } finally {
+                    os.write(response.message().getBytes());
+                    connected = false;
+                }
             }
             close();
         } catch (IOException e) {
@@ -53,8 +66,19 @@ public class Client implements Runnable{
         }
     }
 
-    public void handle(HttpRequest request, HttpResponse response) {
+    public void handle(HttpRequest request, HttpResponse response) throws ServletNotFoundException,
+            MethodNotFoundException{
+        executeHttpMethod(request, response);
+    }
+
+    public void executeHttpMethod(HttpRequest request, HttpResponse response) throws ServletNotFoundException,
+            MethodNotFoundException {
         Servlet servlet = router.getServlet(request.getUrl());
+        if(servlet == null) {
+            throw new ServletNotFoundException("Servlet not found!");
+        }
+        Set<Role> roles = servlet.getRoles();
+
         switch (request.getMethod()) {
             case GET:
                 servlet.get(request, response);
@@ -72,7 +96,7 @@ public class Client implements Runnable{
                 servlet.delete(request, response);
                 break;
             default:
-                break;
+                throw new MethodNotFoundException("Method not found!");
         }
     }
 

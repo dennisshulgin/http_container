@@ -1,23 +1,24 @@
 package http;
 
+import http.config.Configuration;
+import http.service.SessionService;
+import http.service.UserService;
+
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.concurrent.*;
 
-
 public class Server {
+
+    private final Configuration configuration;
     private final ServerSocket socketServer;
-
     private final ExecutorService executorService;
-
-    private final Router router;
-
     private boolean running = false;
 
-    public Server(int port, Router router) throws IOException {
-        this.socketServer = new ServerSocket(port);
-        this.router = router;
+    public Server(Configuration configuration) throws IOException {
+        this.configuration = configuration;
+        this.socketServer = new ServerSocket(configuration.serverPortConfig());
         this.executorService = Executors.newFixedThreadPool(100);
     }
 
@@ -25,7 +26,7 @@ public class Server {
         running = true;
         while(running) {
             Socket clientSocket = socketServer.accept();
-            Client client = new Client(clientSocket, router);
+            Client client = new Client(clientSocket, configuration);
             executorService.submit(client);
         }
     }

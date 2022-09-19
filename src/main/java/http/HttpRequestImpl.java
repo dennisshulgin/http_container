@@ -16,7 +16,7 @@ public class HttpRequestImpl implements HttpRequest{
     private final Map<String, String> params;
 
     public HttpRequestImpl(String message) {
-        String[] parts = message.split(DELIMITER);
+        String[] parts = message.split(DELIMITER, 2);
         String head = parts[0];
         String[] lines = head.split(NEW_LINE);
 
@@ -42,7 +42,7 @@ public class HttpRequestImpl implements HttpRequest{
             String[] line = lines[i].split(":");
             this.headers.put(line[0].trim(), line[1].trim());
         }
-
+        System.out.println(parts[1]);
         String bodyLength = headers.get("Content-Length");
         int len = bodyLength != null ? Integer.parseInt(bodyLength) : 0;
         body = len > 0? parts[1].trim() : "";

@@ -4,21 +4,29 @@ import http.HttpRequest;
 import http.HttpResponse;
 import http.Servlet;
 
-public class MainServlet implements Servlet {
+public class MainServlet extends Servlet {
 
     @Override
     public void get(HttpRequest request, HttpResponse response) {
-        String body = "<html><body><h1>Hello, Denis</h1></body></html>";
+        String body = "{\"ddd\": 1 }";
         response.setCode("OK");
         response.setStatusCode(200);
         response.setBody(body);
         response.addHeader("Server", "denis");
         response.addHeader("Content-Type", "text/html");
+        System.out.println(request.getBody());
     }
 
     @Override
     public void post(HttpRequest request, HttpResponse response) {
-
+        String body = "{\"ddd\": 1 }";
+        response.setCode("OK");
+        response.setStatusCode(200);
+        response.setBody(body);
+        response.addHeader("Server", "denis");
+        response.addHeader("Content-Type", "text/html");
+        //System.out.println(request.getHeaders());
+        //System.out.println(request.getBody());
     }
 
     @Override

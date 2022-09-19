@@ -1,18 +1,20 @@
-import http.Router;
-import http.RouterImpl;
-import http.Server;
+import http.*;
+import http.config.AppConfiguration;
+import http.config.Configuration;
+import http.entity.Role;
+import http.service.SessionServiceImpl;
+import http.service.UserServiceImpl;
 import servlets.AddServlet;
+import servlets.AuthServlet;
 import servlets.MainServlet;
 
 import java.io.IOException;
-import java.util.Arrays;
+import java.util.HashSet;
 
 public class Application {
     public static void main(String[] args) throws IOException {
-        Router router = new RouterImpl();
-        router.addServlet("/main", new MainServlet());
-        router.addServlet("/add", new AddServlet());
-        Server server = new Server(8080, router);
+        Configuration config = new AppConfiguration();
+        Server server = new Server(config);
         server.start();
     }
 }

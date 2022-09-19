@@ -4,10 +4,28 @@ import http.HttpRequest;
 import http.HttpResponse;
 import http.Servlet;
 
-public class AddServlet extends Servlet {
+import java.util.Base64;
+
+public class AuthServlet extends Servlet {
+
+
+
     @Override
     public void get(HttpRequest request, HttpResponse response) {
-        String body = "<html><body><h1>Hello, Denis 2</h1></body></html>";
+        String authInfo = request.getHeaders()
+                .get("Authorization")
+                .replace("Basic", "")
+                .trim();
+        String decodeString = new String(Base64.getDecoder().decode(authInfo));
+        String[] params = decodeString.split(":");
+        String username = params[0];
+        String password = params[1];
+
+
+
+
+
+        String body = "{\"ddd\": 1 }";
         response.setCode("OK");
         response.setStatusCode(200);
         response.setBody(body);
