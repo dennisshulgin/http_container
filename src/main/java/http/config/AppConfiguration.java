@@ -30,8 +30,16 @@ public class AppConfiguration implements Configuration{
         Properties properties = new Properties();
         properties.put("port", 8080);
         properties.put("serverName", "denis");
-        properties.put("sessionService", new SessionServiceImpl());
-        properties.put("userService", new UserServiceImpl());
+        return properties;
+    }
+
+    @Override
+    public Properties servicesConfig() {
+        Properties properties = new Properties();
+        UserService userService = new UserServiceImpl();
+        SessionService sessionService = new SessionServiceImpl();
+        properties.put("userService", userService);
+        properties.put("sessionService", sessionService);
         return properties;
     }
 }

@@ -13,5 +13,6 @@ import java.util.UUID;
 
 public interface Configuration {
     Properties propertiesConfig();
+    Properties servicesConfig();
     Router routerConfig();
 }

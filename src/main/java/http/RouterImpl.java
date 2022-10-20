@@ -1,6 +1,8 @@
 package http;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class RouterImpl implements Router{
@@ -21,5 +23,9 @@ public class RouterImpl implements Router{
 
     public Servlet getServlet(String path) {
         return servlets.get(path);
+    }
+
+    public List<Servlet> getAllServlets() {
+        return new ArrayList<>(servlets.values());
     }
 }

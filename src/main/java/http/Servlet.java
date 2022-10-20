@@ -1,9 +1,11 @@
 package http;
 
 import java.util.HashSet;
+import java.util.Properties;
 import java.util.Set;
 
 public abstract class Servlet {
+    private Properties services;
 
     private final Set<String> roles = new HashSet<>();
 
@@ -35,5 +37,13 @@ public abstract class Servlet {
 
     public Set<String> getRoles() {
         return roles;
+    }
+
+    public Properties getServices() {
+        return services;
+    }
+
+    public void setServices(Properties services) {
+        this.services = services;
     }
 }

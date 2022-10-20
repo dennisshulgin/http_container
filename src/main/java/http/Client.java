@@ -17,28 +17,52 @@ import java.io.OutputStream;
 import java.net.Socket;
 import java.time.ZonedDateTime;
 import java.util.Optional;
+import java.util.Properties;
 import java.util.Set;
 import java.util.UUID;
 
 public class Client implements Runnable{
 
-    private int seconds = 180;
+    private long sessionTimeInSeconds;
     private final Socket socket;
     private final InputStream is;
     private final OutputStream os;
-    private final Router router;
+    private Router router;
+    private Properties propertiesConfig;
+    private Properties servicesConfig;
     private UserService userService;
-
     private SessionService sessionService;
     private boolean connected;
     private final byte[] BUFFER = new byte[1024];
 
-    public Client(Socket socket, Configuration configuration) throws IOException {
+    public Client(Socket socket,
+                  Router router,
+                  Properties propertiesConfig,
+                  Properties servicesConfig) throws IOException {
+        this.router = router;
+        this.propertiesConfig = propertiesConfig;
+        this.servicesConfig = servicesConfig;
+        loadClientPropertiesConfiguration(propertiesConfig);
+        loadClientServicesConfiguration(servicesConfig);
         this.socket = socket;
         this.is = socket.getInputStream();
         this.os = socket.getOutputStream();
-        this.router = configuration.routerConfig();
         this.connected = true;
+    }
+
+    public void loadClientPropertiesConfiguration(Properties propertiesConfig) {
+        this.sessionTimeInSeconds = propertiesConfig
+                .contains("sessionTimeInSeconds") ?
+                (long)propertiesConfig.get("sessionTimeInSeconds") : 7200;
+    }
+
+    public void loadClientServicesConfiguration(Properties servicesConfig) {
+        this.sessionService = servicesConfig
+                .contains("sessionService") ?
+                (SessionService) servicesConfig.get("sessionService") : new SessionServiceImpl();
+        this.sessionService = servicesConfig
+                .contains("userService") ?
+                (SessionService) servicesConfig.get("userService") : new SessionServiceImpl();
     }
 
     @Override
@@ -153,7 +177,7 @@ public class Client implements Runnable{
                     return Optional.empty();
                 }
                 ZonedDateTime time = session.getStartDate();
-                if(time.plusSeconds(seconds).isAfter(ZonedDateTime.now())) {
+                if(time.plusSeconds(sessionTimeInSeconds).isAfter(ZonedDateTime.now())) {
                     return userOptional;
                 }
             }
