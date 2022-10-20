@@ -9,9 +9,9 @@ public class User {
     private UUID id;
     private String username;
     private String password;
-    private Set<Role> roles;
+    private Set<String> roles;
 
-    public User(UUID id, String username, String password, Set<Role> roles) {
+    public User(UUID id, String username, String password, Set<String> roles) {
         this.id = id;
         this.username = username;
         this.password = password;
@@ -42,11 +42,11 @@ public class User {
         this.password = password;
     }
 
-    public Set<Role> getRoles() {
+    public Set<String> getRoles() {
         return roles;
     }
 
-    public void setRoles(Set<Role> roles) {
+    public void setRoles(Set<String> roles) {
         this.roles = roles;
     }
 

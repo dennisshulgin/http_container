@@ -7,7 +7,7 @@ import http.Servlet;
 public class AddServlet extends Servlet {
     @Override
     public void get(HttpRequest request, HttpResponse response) {
-        String body = "<html><body><h1>Hello, Denis 2</h1></body></html>";
+        String body = "<html><body><h1>Hello, Denis! This is AddServlet!</h1></body></html>";
         response.setCode("OK");
         response.setStatusCode(200);
         response.setBody(body);

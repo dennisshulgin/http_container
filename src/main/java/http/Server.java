@@ -18,7 +18,7 @@ public class Server {
 
     public Server(Configuration configuration) throws IOException {
         this.configuration = configuration;
-        this.socketServer = new ServerSocket(configuration.serverPortConfig());
+        this.socketServer = new ServerSocket(configuration.portConfig());
         this.executorService = Executors.newFixedThreadPool(100);
     }
 

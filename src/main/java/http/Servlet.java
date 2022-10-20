@@ -1,13 +1,11 @@
 package http;
 
-import http.entity.Role;
-
 import java.util.HashSet;
 import java.util.Set;
 
 public abstract class Servlet {
 
-    private final Set<Role> roles = new HashSet<>();
+    private final Set<String> roles = new HashSet<>();
 
     public void get(HttpRequest request, HttpResponse response) {}
 
@@ -19,23 +17,23 @@ public abstract class Servlet {
 
     public void patch(HttpRequest request, HttpResponse response) {}
 
-    public final void addRole(Role role) {
+    public final void addRole(String role) {
         roles.add(role);
     }
 
-    public final void addRoles(Set<Role> roles) {
+    public final void addRoles(Set<String> roles) {
         this.roles.addAll(roles);
     }
 
-    public final boolean containsRole(Role role) {
+    public final boolean containsRole(String role) {
         return roles.contains(role);
     }
 
-    public final void removeRole(Role role) {
+    public final void removeRole(String role) {
         roles.remove(role);
     }
 
-    public Set<Role> getRoles() {
+    public Set<String> getRoles() {
         return roles;
     }
 }
