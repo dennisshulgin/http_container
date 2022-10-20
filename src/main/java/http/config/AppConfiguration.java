@@ -11,7 +11,9 @@ import servlets.AddServlet;
 import servlets.AuthServlet;
 import servlets.MainServlet;
 
-public class AppConfiguration extends Configuration{
+import java.util.Properties;
+
+public class AppConfiguration implements Configuration{
     @Override
     public Router routerConfig() {
         Router router = new RouterImpl();
@@ -24,7 +26,12 @@ public class AppConfiguration extends Configuration{
     }
 
     @Override
-    public int portConfig() {
-        return 8080;
+    public Properties propertiesConfig() {
+        Properties properties = new Properties();
+        properties.put("port", 8080);
+        properties.put("serverName", "denis");
+        properties.put("sessionService", new SessionServiceImpl());
+        properties.put("userService", new UserServiceImpl());
+        return properties;
     }
 }

@@ -22,14 +22,14 @@ import java.util.UUID;
 
 public class Client implements Runnable{
 
-    private int seconds = 120;
+    private int seconds = 180;
     private final Socket socket;
     private final InputStream is;
     private final OutputStream os;
     private final Router router;
-    private UserService userService = new UserServiceImpl();
+    private UserService userService;
 
-    private SessionService sessionService = new SessionServiceImpl();
+    private SessionService sessionService;
     private boolean connected;
     private final byte[] BUFFER = new byte[1024];
 
@@ -125,7 +125,9 @@ public class Client implements Runnable{
         Set<String> roles = servlet.getRoles();
         UUID userId = request.getHeaders().containsKey("userId") ?
                 UUID.fromString(request.getHeaders().get("userId")) : null;
-        Optional<User> userOptional = getUser(userId);
+        UUID sessionId = request.getHeaders().containsKey("userId") ?
+                UUID.fromString(request.getHeaders().get("sessionId")) : null;
+        Optional<User> userOptional = getUser(userId, sessionId);
         if(roles.size() > 0 && userOptional.isEmpty()) {
             return false;
         }
@@ -137,8 +139,8 @@ public class Client implements Runnable{
         return true;
     }
 
-    public Optional<User> getUser(UUID userId) {
-        if(userId == null) {
+    public Optional<User> getUser(UUID userId, UUID sessionId) {
+        if(userId == null || sessionId == null) {
             return Optional.empty();
         }
         Optional<User> userOptional = userService.findUserById(userId);
@@ -147,6 +149,9 @@ public class Client implements Runnable{
             Optional<Session> sessionOptional = sessionService.findSessionByUserId(user.getId());
             if(sessionOptional.isPresent()) {
                 Session session = sessionOptional.get();
+                if(!session.getSessionId().equals(sessionId)) {
+                    return Optional.empty();
+                }
                 ZonedDateTime time = session.getStartDate();
                 if(time.plusSeconds(seconds).isAfter(ZonedDateTime.now())) {
                     return userOptional;

@@ -8,9 +8,10 @@ import http.service.UserService;
 import http.service.UserServiceImpl;
 
 import java.util.Optional;
+import java.util.Properties;
 import java.util.UUID;
 
-public abstract class Configuration {
-    public abstract int portConfig();
-    public abstract Router routerConfig();
+public interface Configuration {
+    Properties propertiesConfig();
+    Router routerConfig();
 }

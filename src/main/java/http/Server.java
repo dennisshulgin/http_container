@@ -11,6 +11,7 @@ import java.util.concurrent.*;
 
 public class Server {
 
+    private int port = 8080;
     private final Configuration configuration;
     private final ServerSocket socketServer;
     private final ExecutorService executorService;
@@ -18,8 +19,11 @@ public class Server {
 
     public Server(Configuration configuration) throws IOException {
         this.configuration = configuration;
-        this.socketServer = new ServerSocket(configuration.portConfig());
         this.executorService = Executors.newFixedThreadPool(100);
+        if (configuration.propertiesConfig().contains("port")) {
+            port = (int)configuration.propertiesConfig().get("port");
+        }
+        this.socketServer = new ServerSocket(port);
     }
 
     public void start() throws IOException {
